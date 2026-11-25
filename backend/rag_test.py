@@ -1,5 +1,9 @@
-from fastapi import FastAPI
+import hmac
+import os
+
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from rag.pdf_routes import router as pdf_router
 from rag.rag_routes import router as rag_router
@@ -19,6 +23,20 @@ app = FastAPI(
     version="1.7.0",
     description="CampusGPT Personal Intelligence Engine"
 )
+
+
+@app.middleware("http")
+async def require_frontend_token(request: Request, call_next):
+    if request.method == "GET" and request.url.path == "/":
+        return await call_next(request)
+    token = os.getenv("CAMPUSGPT_PROXY_TOKEN", "")
+    if os.getenv("RAILWAY_ENVIRONMENT_ID") and not token:
+        return JSONResponse({"detail": "Configure the frontend connection on Railway."}, status_code=503)
+    if token:
+        supplied = request.headers.get("x-campusgpt-proxy-token", "")
+        if not hmac.compare_digest(supplied.encode(), token.encode()):
+            return JSONResponse({"detail": "CampusGPT frontend authorization required."}, status_code=401)
+    return await call_next(request)
 
 
 app.add_middleware(

@@ -30,6 +30,7 @@ from services.url_detector import detect_website_request
 from services.deep_search import deep_search
 
 from rag.pipeline import build_rag_context
+from rag.semester import semester_overview, semester_overview_request
 
 from memory.database import initialize_database
 
@@ -237,6 +238,20 @@ async def chat(request: ChatRequest):
 
         elif mode == "rag":
 
+            semester = semester_overview_request(question)
+            if request.document_id and semester is not None:
+                overview = await run_in_threadpool(semester_overview, request.document_id, semester)
+                if overview:
+                    return {
+                        **overview,
+                        "conversation_id": conversation_id,
+                        "personality": personality,
+                        "mode": mode,
+                        "rag_used": True,
+                        "memory_saved": False,
+                        "web_used": False,
+                    }
+
             result = await run_in_threadpool(
                 build_rag_context,
                 question,
@@ -286,6 +301,15 @@ async def chat(request: ChatRequest):
                 "Use the user's preferred language."
                 "\n\n" + question
             )
+            if mode == "rag":
+                prompt = (
+                    "For syllabus questions, give the requested unit or module first. "
+                    "List its topics in order using the wording in the document. "
+                    "Keep answers about the syllabus grounded in the provided excerpts, "
+                    "cite the relevant PDF page, and say if part of the requested unit is missing. "
+                    "When explaining a concept, clearly distinguish the explanation from "
+                    "the topics actually listed in the syllabus.\n\n" + prompt
+                )
 
         context_stats = {}
         answer = await run_in_threadpool(

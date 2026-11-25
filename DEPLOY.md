@@ -1,5 +1,24 @@
 # Deploy CampusGPT
 
+## Railway backend and Vercel frontend
+
+1. In Railway, link the GitHub repo and name the service `backend`. Set its root directory to `/backend` so Railway uses the backend Dockerfile. Set the health check path to `/`. Generate a public backend domain with target port `8001`.
+2. In Railway backend Variables, set `CAMPUSGPT_AI_PROVIDER=groq` and your `GROQ_API_KEY`, or select OpenRouter with `CAMPUSGPT_AI_PROVIDER=openrouter`, `OPENROUTER_API_KEY`, and `OPENROUTER_MODEL=openrouter/free`. Set `CAMPUSGPT_PROXY_TOKEN` to a random server-only secret. To preserve PDF indexes and chat memory, attach a volume at `/app/database` and set `RAILWAY_RUN_UID=0` for volume permissions.
+3. In Vercel, import the same GitHub repo with framework **Next.js**, root directory `frontend`, and build command `npm run build`. Set these Vercel environment variables before deploying:
+
+   | Variable | Value |
+   | --- | --- |
+   | `CAMPUSGPT_BACKEND_URL` | The Railway backend HTTPS origin, without a path |
+   | `CAMPUSGPT_PROXY_TOKEN` | Exactly the same secret as in Railway |
+   | `CAMPUSGPT_PREVIEW_PASSWORD` | A separate strong password for access to chat |
+   | `CAMPUSGPT_PREVIEW_USER` | Optional username. Defaults to `campus` |
+
+4. Open the Vercel domain, click **Launch AI**, and sign in using the preview username and password. Upload the syllabus and ask **Semester 1 ka syllabus batao** to verify. Start with PDFs under 4 MB on Vercel. For larger uploads, check whether your project supports the larger request-body feature. Keep the API key on Railway.
+
+For Google sign-in on this setup, set `CAMPUSGPT_PUBLIC_URL` on Railway to the exact Vercel HTTPS origin and use that domain in the Google callback registration below.
+
+## Docker Compose on a Linux server
+
 The bundle runs the landing page, chat, PDF workflows, and hosted AI API integrations on a Linux host with Docker Compose v2. The host needs a domain pointing to it and inbound ports 80 and 443 available. Only Caddy is published. It serves HTTPS and requires a login before forwarding requests to the app.
 
 1. Upload and extract this bundle on your host. From the extracted project directory, copy `.env.deploy.example` to `.env`. Set `CAMPUSGPT_DOMAIN` to your domain without a scheme or path.

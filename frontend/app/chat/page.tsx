@@ -37,6 +37,8 @@ const personalities = [
 const requestTimeout = 185000;
 const detailedNotesPrompt = "Make detailed study notes for the whole PDF.";
 const notesRequest = /\b(?:summari[sz]e|summary|notes|bullet points)\b|सारांश|नोट्स/i;
+const focusedPdfRequest = /\b(?:unit|module|chapter|page)\s*[-:#]?\s*(?:\d+|[ivx]+)\b/i;
+const semesterPdfRequest = /\b(?:semester|sem)\b/i;
 const syllabusOverview = /\b(?:full|whole|entire|complete|pura|poora|sara) syllabus\b|\b(?:list|show|give me) (?:all|the) (?:syllabus|units|modules)\b|पूरा पाठ्यक्रम/i;
 const settingsKey = "campusgpt-ai-settings";
 
@@ -220,7 +222,8 @@ export default function ChatPage() {
       }
 
       const documentId = text.toLowerCase().includes("attached file:") ? undefined : document?.id;
-      if (documentId && (notesRequest.test(text) || syllabusOverview.test(text))) {
+      if (documentId && !semesterPdfRequest.test(text)
+        && (syllabusOverview.test(text) || (notesRequest.test(text) && !focusedPdfRequest.test(text)))) {
         setNotesProgress("Preparing detailed PDF notes…");
         let totalSections = 1;
         for (let section = 0; section < totalSections; section++) {
