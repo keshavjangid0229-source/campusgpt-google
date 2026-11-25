@@ -1,0 +1,56 @@
+services:
+  gateway:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      - frontend
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      CAMPUSGPT_DOMAIN: ${CAMPUSGPT_DOMAIN:?Set CAMPUSGPT_DOMAIN in .env}
+      CAMPUSGPT_USER: ${CAMPUSGPT_USER:-campus}
+      CAMPUSGPT_PASSWORD_HASH: ${CAMPUSGPT_PASSWORD_HASH:?Set CAMPUSGPT_PASSWORD_HASH in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - gateway_data:/data
+      - gateway_config:/config
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      CAMPUSGPT_AI_PROVIDER: ${CAMPUSGPT_AI_PROVIDER:-auto}
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      XAI_MODEL: ${XAI_MODEL:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      CAMPUSGPT_SESSION_SECRET: ${CAMPUSGPT_SESSION_SECRET:-}
+      CAMPUSGPT_PUBLIC_URL: https://${CAMPUSGPT_DOMAIN:?Set CAMPUSGPT_DOMAIN in .env}
+      CAMPUSGPT_CREATOR_NAME: ${CAMPUSGPT_CREATOR_NAME:-Keshav Jangid}
+    volumes:
+      - campus_data:/app/database
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/', timeout=3).close()"]
+      start_period: 30s
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  campus_data:
+  gateway_data:
+  gateway_config:

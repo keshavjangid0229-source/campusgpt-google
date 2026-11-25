@@ -1,0 +1,238 @@
+
+@import "tailwindcss";
+
+/* STEP 03 — Neural Flow Design System */
+
+:root {
+  --background: #060d0b;
+  --foreground: #f1f5f2;
+
+  --primary: #a1efc7;
+  --primary-dark: #55d99b;
+  --surface: #10261f;
+  --muted: #8fa69b;
+
+  --glass: rgba(16, 38, 31, 0.45);
+  --border: rgba(161, 239, 199, 0.15);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+/* Text Selection */
+
+::selection {
+  background: #a1efc7;
+  color: #060d0b;
+}
+
+/* Custom Scrollbar */
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060d0b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #254638;
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #55d99b;
+}
+
+/* Glassmorphism */
+
+.glass-panel {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 24px;
+}
+
+/* Gradient Typography */
+
+.gradient-text {
+  background: linear-gradient(
+    120deg,
+    #ffffff,
+    #a1efc7,
+    #55d99b
+  );
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Primary Button */
+
+.neural-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 28px;
+
+  border: 1px solid #a1efc7;
+  border-radius: 100px;
+
+  background: #a1efc7;
+  color: #060d0b;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.neural-button:hover {
+  transform: translateY(-4px);
+  background: #c5ffdf;
+  box-shadow: 0 0 40px #a1efc733;
+}
+
+/* Secondary Button */
+
+.neural-button-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 28px;
+
+  border: 1px solid var(--border);
+  border-radius: 100px;
+
+  background: transparent;
+  color: var(--foreground);
+
+  transition: all 0.3s ease;
+}
+
+.neural-button-outline:hover {
+  background: #a1efc710;
+  border-color: #a1efc7;
+}
+
+/* Background Grid */
+
+.neural-grid {
+  background-image:
+    linear-gradient(
+      rgba(161, 239, 199, 0.035) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      90deg,
+      rgba(161, 239, 199, 0.035) 1px,
+      transparent 1px
+    );
+
+  background-size: 60px 60px;
+}
+
+/* Animations */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s ease forwards;
+}
+
+.animate-glow {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
