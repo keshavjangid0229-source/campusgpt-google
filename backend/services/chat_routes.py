@@ -241,7 +241,7 @@ async def chat(request: ChatRequest):
                 build_rag_context,
                 question,
                 request.document_id,
-                4
+                8
             )
 
             if not result["found"]:

@@ -37,6 +37,7 @@ const personalities = [
 const requestTimeout = 185000;
 const detailedNotesPrompt = "Make detailed study notes for the whole PDF.";
 const notesRequest = /\b(?:summari[sz]e|summary|notes|bullet points)\b|सारांश|नोट्स/i;
+const syllabusOverview = /\b(?:full|whole|entire|complete|pura|poora|sara) syllabus\b|\b(?:list|show|give me) (?:all|the) (?:syllabus|units|modules)\b|पूरा पाठ्यक्रम/i;
 const settingsKey = "campusgpt-ai-settings";
 
 function subscribeToDesktop(callback: () => void) {
@@ -209,10 +210,17 @@ export default function ChatPage() {
         }
         document = { id: indexed.document_id, name: filename };
         history.setDocument(chatId, document);
+        if (Array.isArray(indexed.unreadable_pages) && indexed.unreadable_pages.length) {
+          const pages = indexed.unreadable_pages.filter(Number.isSafeInteger);
+          history.addMessage(chatId, {
+            role: "assistant",
+            content: `PDF ke pages ${pages.join(", ")} poori tarah readable nahi the. Notes aur answers mein sirf readable text use hoga.`,
+          });
+        }
       }
 
       const documentId = text.toLowerCase().includes("attached file:") ? undefined : document?.id;
-      if (documentId && notesRequest.test(text)) {
+      if (documentId && (notesRequest.test(text) || syllabusOverview.test(text))) {
         setNotesProgress("Preparing detailed PDF notes…");
         let totalSections = 1;
         for (let section = 0; section < totalSections; section++) {

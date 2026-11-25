@@ -5,7 +5,7 @@ CampusGPT has a Next.js workspace and a FastAPI backend that calls hosted AI API
 ## Deploy with an AI API key
 
 1. Deploy the `backend` directory as a Python web service. Install `requirements.txt` and start it with `python -m uvicorn rag_test:app --host 0.0.0.0 --port "$PORT"` on a Linux host that sets `PORT`.
-2. In the backend service's secrets, set `CAMPUSGPT_AI_PROVIDER` to your provider and add its key. Use `xai` with `XAI_API_KEY`, `openrouter` with `OPENROUTER_API_KEY`, `openai` with `OPENAI_API_KEY`, or `gemini` with `GEMINI_API_KEY`. One key is enough. Set the corresponding `*_MODEL` variable if you want a different model.
+2. In the backend service's secrets, set `CAMPUSGPT_AI_PROVIDER` to your provider and add its key. Use `groq` with `GROQ_API_KEY`, `xai` with `XAI_API_KEY`, `openrouter` with `OPENROUTER_API_KEY`, `openai` with `OPENAI_API_KEY`, or `gemini` with `GEMINI_API_KEY`. One key is enough. Set the corresponding `*_MODEL` variable if you want a different model.
 3. Deploy the `frontend` directory. Before building Next.js, set `CAMPUSGPT_BACKEND_URL` to the hosted backend's HTTPS origin, without a route path.
 
 Mount persistent storage at the backend's `database` directory to keep PDF indexes and conversation memory across restarts. Keep API keys in backend secrets. This app has no user authentication, so restrict access to both services before exposing a deployment that uses your provider credits. Chat prompts, relevant history, and evidence used for answers are sent to the selected provider.

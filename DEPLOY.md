@@ -3,7 +3,7 @@
 The bundle runs the landing page, chat, PDF workflows, and hosted AI API integrations on a Linux host with Docker Compose v2. The host needs a domain pointing to it and inbound ports 80 and 443 available. Only Caddy is published. It serves HTTPS and requires a login before forwarding requests to the app.
 
 1. Upload and extract this bundle on your host. From the extracted project directory, copy `.env.deploy.example` to `.env`. Set `CAMPUSGPT_DOMAIN` to your domain without a scheme or path.
-2. Choose a provider and configure its key in `.env`. For direct Grok use `CAMPUSGPT_AI_PROVIDER=xai` and `XAI_API_KEY`. For OpenRouter use `openrouter` and `OPENROUTER_API_KEY`. Direct OpenAI and Gemini use `openai` / `OPENAI_API_KEY` and `gemini` / `GEMINI_API_KEY`. Create a key in your provider account and keep it on the server.
+2. Choose a provider and configure its key in `.env`. Use `CAMPUSGPT_AI_PROVIDER=groq` and `GROQ_API_KEY` for GroqCloud, or `xai` and `XAI_API_KEY` for direct Grok. For OpenRouter use `openrouter` and `OPENROUTER_API_KEY`. Direct OpenAI and Gemini use `openai` / `OPENAI_API_KEY` and `gemini` / `GEMINI_API_KEY`. Create a key in your provider account and keep it on the server.
 3. Set your login password by running the command below. Paste the resulting hash inside the single quotes in `CAMPUSGPT_PASSWORD_HASH`. Use a password you have not used elsewhere.
 
    ```sh
@@ -21,6 +21,8 @@ The bundle runs the landing page, chat, PDF workflows, and hosted AI API integra
 For startup errors, run `docker compose logs --tail=100 gateway frontend backend` on the host. The `campus_data` volume stores chat memory and PDF indexes. Keep it when updating the deployment. Browser-saved settings and chat history remain tied to the browser and domain where they were saved.
 
 Provider credentials and the deployment password are supplied by the owner. Chat prompts and relevant document evidence go to the chosen hosted AI provider. Detailed PDF notes are extracted on the backend.
+
+The backend container includes English and Hindi OCR data for scanned syllabi. Rebuild the backend to install it, then re-upload PDFs previously indexed without OCR. Uploads report any pages without readable text, including scanned pages left after the OCR time budget.
 
 ## Optional Google sign-in
 

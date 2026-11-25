@@ -14,6 +14,7 @@ load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 PROVIDERS = {
     "openrouter": ("OPENROUTER", "https://openrouter.ai/api/v1/chat/completions", "openrouter/auto"),
     "xai": ("XAI", "https://api.x.ai/v1/responses", "grok-4.7"),
+    "groq": ("GROQ", "https://api.groq.com/openai/v1/chat/completions", "openai/gpt-oss-120b"),
     "openai": ("OPENAI", "https://api.openai.com/v1/responses", "gpt-4.1-mini"),
     "gemini": (
         "GEMINI",
@@ -84,6 +85,8 @@ def generate_answer(question, context="", history=None, personality="auto", *, c
         payload.update(input=messages, max_output_tokens=4096, store=False)
         if provider == "xai":
             payload["reasoning"] = {"effort": "low"}
+    elif provider == "groq":
+        payload.update(messages=messages, max_completion_tokens=4096)
     else:
         payload.update(messages=messages, max_tokens=4096)
 

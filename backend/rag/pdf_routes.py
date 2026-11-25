@@ -72,9 +72,11 @@ async def upload_pdf(file: UploadFile = File(...)):
 
         document_id = str(uuid4())
 
+        coverage = {}
         pages = await run_in_threadpool(
             extract_pdf,
-            data
+            data,
+            coverage,
         )
 
         chunks = await run_in_threadpool(
@@ -95,6 +97,7 @@ async def upload_pdf(file: UploadFile = File(...)):
             "document_id": document_id,
             "filename": filename,
             "pages_with_text": len(pages),
+            **coverage,
             "total_chunks": len(chunks),
             "stored_chunks": stored,
             "preview": chunks[0]["text"][:300]
