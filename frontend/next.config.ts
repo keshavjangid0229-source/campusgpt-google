@@ -7,7 +7,6 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       { source: "/api/campus/chat", destination: `${backendUrl}/chat` },
-      { source: "/api/campus/auth/:path(google|callback|session|logout)", destination: `${backendUrl}/auth/:path` },
       { source: "/api/campus/pdf/upload", destination: `${backendUrl}/pdf/upload` },
       { source: "/api/campus/pdf/notes", destination: `${backendUrl}/document/notes` },
       {

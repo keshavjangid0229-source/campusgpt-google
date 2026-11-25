@@ -27,6 +27,7 @@ export type Chat = {
 };
 
 const STORAGE_KEY = "campusgpt-chats-v1";
+const ACTIVE_CHAT_KEY = "campusgpt-active-chat-v1";
 
 export default function useChatHistory() {
 
@@ -58,6 +59,10 @@ export default function useChatHistory() {
               pinned: chat.pinned === true,
             }));
           setChats(restored);
+          const savedActiveId = localStorage.getItem(ACTIVE_CHAT_KEY);
+          if (savedActiveId && restored.some((chat) => chat.id === savedActiveId)) {
+            setActiveId(savedActiveId);
+          }
         }
       } catch (error) {
         console.error("Failed to load chat history", error);
@@ -87,6 +92,16 @@ export default function useChatHistory() {
     }
 
   }, [chats, ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    try {
+      if (activeId) localStorage.setItem(ACTIVE_CHAT_KEY, activeId);
+      else localStorage.removeItem(ACTIVE_CHAT_KEY);
+    } catch (error) {
+      console.error("Failed to save active chat", error);
+    }
+  }, [activeId, ready]);
 
   const activeChat =
     chats.find((chat) => chat.id === activeId) ?? null;

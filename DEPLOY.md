@@ -10,12 +10,10 @@
    | --- | --- |
    | `CAMPUSGPT_BACKEND_URL` | The Railway backend HTTPS origin, without a path |
    | `CAMPUSGPT_PROXY_TOKEN` | Exactly the same secret as in Railway |
-   | `CAMPUSGPT_PREVIEW_PASSWORD` | A separate strong password for access to chat |
-   | `CAMPUSGPT_PREVIEW_USER` | Optional username. Defaults to `campus` |
 
-4. Open the Vercel domain, click **Launch AI**, and sign in using the preview username and password. Upload the syllabus and ask **Semester 1 ka syllabus batao** to verify. Start with PDFs under 4 MB on Vercel. For larger uploads, check whether your project supports the larger request-body feature. Keep the API key on Railway.
+4. Open the Vercel domain and click **Launch AI**. Upload the syllabus and ask **Semester 1 ka syllabus batao** to verify. Start with PDFs under 4 MB on Vercel. For larger uploads, check whether your project supports the larger request-body feature. Keep the API key on Railway.
 
-For Google sign-in on this setup, set `CAMPUSGPT_PUBLIC_URL` on Railway to the exact Vercel HTTPS origin and use that domain in the Google callback registration below.
+Visitors can open chat without an account. Chat history, the last selected conversation, planner entries, and settings are saved in the current browser and site. These do not sync across browsers. Public chat requests consume your provider quota.
 
 ## Docker Compose on a Linux server
 
@@ -43,8 +41,4 @@ Provider credentials and the deployment password are supplied by the owner. Chat
 
 The backend container includes English and Hindi OCR data for scanned syllabi. Rebuild the backend to install it, then re-upload PDFs previously indexed without OCR. Uploads report any pages without readable text, including scanned pages left after the OCR time budget.
 
-## Optional Google sign-in
-
-Create a **Web application** OAuth client in Google Cloud. Register `https://YOUR_DOMAIN/api/campus/auth/callback` as an authorized redirect URI. Add the client ID and client secret to `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in the server's `.env`. Generate a session secret with `openssl rand -hex 32` and save it as `CAMPUSGPT_SESSION_SECRET`. Redeploy the backend to activate **Continue with Google** in chat. For local preview, set `CAMPUSGPT_PUBLIC_URL=http://127.0.0.1:3000` in `backend/.env` and register `http://127.0.0.1:3000/api/campus/auth/callback` for that client.
-
-Google sign-in identifies the user in the browser session. It leaves the gateway login in place and does not sync chat history across browsers. `CAMPUSGPT_CREATOR_NAME` defaults to Keshav Jangid.
+`CAMPUSGPT_CREATOR_NAME` defaults to Keshav Jangid.

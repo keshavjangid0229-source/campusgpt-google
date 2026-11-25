@@ -29,7 +29,6 @@ import StudyResources from "../../components/resources/StudyResources";
 import useChatHistory from "../../hooks/useChatHistory";
 import type { Resource } from "../../data/resources";
 import CampusPlanner from "../../components/CampusPlanner";
-import GoogleAccount from "../../components/GoogleAccount";
 
 const personalities = [
   "auto", "default", "coding", "study", "research", "creative", "professional",
@@ -415,7 +414,6 @@ export default function ChatPage() {
 
             Preview
           </div>
-          <GoogleAccount />
         </header>
 
         {error && <p role="alert" className="px-5 py-2 text-sm text-red-300">{error}</p>}
