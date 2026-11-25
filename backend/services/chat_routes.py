@@ -3,7 +3,7 @@ from uuid import uuid4
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from starlette.concurrency import run_in_threadpool
 
 from services.llm import AIServiceError, generate_answer
@@ -57,6 +57,8 @@ PersonalityMode = Literal[
 
 
 class ChatRequest(BaseModel):
+
+    model_config = ConfigDict(extra="forbid")
 
     message: str = Field(
         min_length=1,
