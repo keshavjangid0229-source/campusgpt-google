@@ -6,10 +6,14 @@ from rag.document_ai import get_document_chunks
 NUMBERS = {
     **dict(zip(("first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"), range(1, 9))),
     **dict(zip(("i", "ii", "iii", "iv", "v", "vi", "vii", "viii"), range(1, 9))),
-    "eight": 8,
+    **dict(zip(("one", "two", "three", "four", "five", "six", "seven", "eight"), range(1, 9))),
 }
 NUMBER = r"(?:[1-8](?:st|nd|rd|th)?|" + "|".join(NUMBERS) + r")"
-SEMESTER = rf"(?:\b(?:semester|sem)\s*[-.:]?\s*({NUMBER})\b|\b({NUMBER})\s+(?:semester|sem)\b)"
+SEMESTER_SEPARATOR = r"[-.:\u2013\u2014]"
+SEMESTER = (
+    rf"(?:\b(?:semester|sem)\s*{SEMESTER_SEPARATOR}?\s*({NUMBER})\b"
+    rf"|\b({NUMBER})(?:\s*{SEMESTER_SEPARATOR}\s*|\s+)(?:semester|sem)\b)"
+)
 QUERY = re.compile(SEMESTER, re.IGNORECASE)
 HEADING = re.compile(rf"^\s*{SEMESTER}\s*$", re.IGNORECASE)
 ROW = re.compile(
